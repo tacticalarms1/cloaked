@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloaked Site File Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #333;
+            text-align: center;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #555;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        button {
+            display: block;
+            width: 100%;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            text-align: center;
+            color: #777;
+        }
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cloaked Site File Generator</h1>
+        
+        <label for="url-input">Enter URL for Iframe:</label>
+        <input type="text" id="url-input" placeholder="Enter the URL that you want the file to open" />
+        
+        <label for="title-input">Enter Page Title:</label>
+        <input type="text" id="title-input" placeholder="Enter the title for the file tab" />
+        
+        <label for="favicon-input">Enter URL to Cloak as:</label>
+        <input type="text" id="favicon-input" placeholder="Type URL of any website you want the file to cloak as." />
+        
+        <button onclick="downloadHtml()">Download File</button>
+        
+        <div class="footer">
+            Made by <a href="https://github.com/Blobby-Boi/">Blobby Boi</a>
+        </div>
+    </div>
+
+    <script>
+        function normalizeUrl(url) {
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                return 'https://' + url;
+            }
+            return url;
+        }
+
+        function downloadHtml() {
+            const rawUrl = document.getElementById('url-input').value;
+            const rawBaseUrl = document.getElementById('favicon-input').value;
+            const title = document.getElementById('title-input').value || "Iframe Page";
+
+            const url = normalizeUrl(rawUrl);
+            const baseUrl = rawBaseUrl ? normalizeUrl(rawBaseUrl) : "";
+
+            const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${baseUrl}`;
+
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${title}</title>
+                    <link rel="icon" href="${faviconUrl}" type="image/x-icon">
+                    <style>
+                        body, html {
+                            margin: 0;
+                            padding: 0;
+                            height: 100%;
+                            overflow: hidden;
+                        }
+                        iframe {
+                            width: 100%;
+                            height: 100%;
+                            border: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <iframe src="${url}"></iframe>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+
+            const link = document.createElement('a');
+            const fileName = title.replace(/\s+/g, '_') + '.html';
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+
+            link.click();
+        }
+    </script>
+</body>
+</html>
